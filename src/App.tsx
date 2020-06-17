@@ -1,5 +1,5 @@
 import React from 'react';
-import { Formik, Form, Field, FormikHelpers, FormikErrors, FormikTouched } from 'formik';
+import { Formik, Form, Field, FormikHelpers, FormikErrors, FormikTouched, FieldArray, FieldArrayRenderProps } from 'formik';
 
 interface FormValues {
   name: string;
@@ -7,6 +7,7 @@ interface FormValues {
     url: string;
     type: string;
   };
+  labels: Array<{ name: string; value: string }>;
 }
 
 export default function App() {
@@ -15,11 +16,12 @@ export default function App() {
     repo: {
       url: '',
       type: '',
-    }
+    },
+    labels: [],
   };
 
   const validate = (values: FormValues): FormikErrors<FormValues> => {
-    console.log('validate')
+    console.log('validate', values);
     const errors: FormikErrors<FormValues> & { repo: {} } = {
       repo: {},
     };
@@ -54,8 +56,11 @@ export default function App() {
           const setTouched = (touched: FormikTouched<FormValues>, shouldValidate?: boolean) => {
             const prevTouched = formikProps.touched;
             const mergedTouched: FormikTouched<FormValues> = {
+              // Override if new touched is set, fallback to previous value
               name: touched.name ?? prevTouched.name,
               repo: { ...prevTouched.repo, ...touched.repo },
+              // Simple, because we do not manually switch this:
+              labels: prevTouched.labels,
             };
             formikProps.setTouched(mergedTouched, shouldValidate);
           }
@@ -91,6 +96,33 @@ export default function App() {
                   {formikProps.touched.repo?.type ? 'Touched ' : ''}
                   {formikProps.touched.repo?.type && formikProps.errors.repo?.type}
                 </label>
+              </p>
+              <p>
+                <label>Labels:</label><br/>
+                <FieldArray name="labels">
+                  {(fieldArrayProps: FieldArrayRenderProps) => {
+                    return (
+                      <>
+                        {formikProps.values.labels.map((_, index) => {
+                          return (
+                            <React.Fragment key={index}>
+                              {index + 1}.
+                              <Field type="text" name={`labels.${index}.name`} />
+                              <Field type="text" name={`labels.${index}.value`} />
+                              <button type="button" onClick={() => fieldArrayProps.remove(index)}>Remove</button>
+                              {formikProps.touched.labels?.[index]?.name ? 'Name touched' : ''}
+                              <br/>
+                            </React.Fragment>
+                          );
+                        })}
+                        <button type="button" onClick={() => fieldArrayProps.push({
+                          name: '',
+                          value: '',
+                        })}>Add label</button>
+                      </>
+                    );
+                  }}
+                </FieldArray>
               </p>
               <p>
                 <button type="button" onClick={resetForm}>Reset form</button>
