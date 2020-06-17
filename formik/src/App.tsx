@@ -1,21 +1,35 @@
 import React from 'react';
 
 export default function App() {
+  const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const inputFields = event.currentTarget.querySelectorAll('input');
+    const formValues: Record<string, string> = {};
+    inputFields.forEach((inputField) => {
+      formValues[inputField.name] = inputField.value;
+    })
+    console.log('submit', formValues);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
+    <>
+      <form onSubmit={onSubmit}>
         <p>
-          Edit <code>src/App.tsx</code> and save to reload.
+          <label>
+            Name:<br/>
+            <input type="text" name="name" />
+          </label>
         </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+        <p>
+          <label>
+            URL:<br/>
+            <input type="text" name="url" />
+          </label>
+        </p>
+        <p>
+          <button type="submit">Submit</button>
+        </p>
+      </form>
+    </>
   );
 }
