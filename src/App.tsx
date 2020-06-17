@@ -3,24 +3,30 @@ import { Formik, Form, Field, FormikHelpers, FormikErrors } from 'formik';
 
 interface FormValues {
   name: string;
-  url: string;
+  repo: {
+    url?: string;
+  };
 }
 
 export default function App() {
   const initialValues: FormValues = {
     name: '',
-    url: '',
+    repo: {
+      url: '',
+    }
   };
 
   const validate = (values: FormValues): FormikErrors<FormValues> => {
     console.log('validate')
-    const errors: FormikErrors<FormValues> = {};
+    const errors: FormikErrors<FormValues> & { repo: {} } = {
+      repo: {},
+    };
 
     if (!values.name) {
       errors.name = 'Name is required';
     }
-    if (!values.url) {
-      errors.url = 'URL is required';
+    if (!values.repo.url) {
+      errors.repo.url = 'URL is required';
     }
 
     return errors;
@@ -47,9 +53,9 @@ export default function App() {
             <p>
               <label>
                 URL:<br/>
-                <Field type="text" name="url" />
-                {formikProps.touched.url ? 'Touched ' : ''}
-                {formikProps.touched.url && formikProps.errors.url}
+                <Field type="text" name="repo.url" />
+                {formikProps.touched.repo?.url ? 'Touched ' : ''}
+                {formikProps.touched.repo?.url && formikProps.errors.repo?.url}
               </label>
             </p>
             <p>
