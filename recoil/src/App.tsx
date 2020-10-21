@@ -1,26 +1,27 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { RecoilRoot } from "recoil";
 
-function App() {
+import Home from "./pages/Home";
+import About from "./pages/About";
+import Login from "./pages/Login";
+import Header from "./header/Header";
+
+export default function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <RecoilRoot>
+      <Router>
+        <Header />
+
+        <Switch>
+          <Route exact path="/about" component={About} />
+          <Route exact path="/login" component={Login} />
+          <Route exact path="/" component={Home} />
+          <Route>
+            <h1>404 - Route not found</h1>
+          </Route>
+        </Switch>
+      </Router>
+    </RecoilRoot>
   );
 }
-
-export default App;
