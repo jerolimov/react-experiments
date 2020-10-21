@@ -16,4 +16,11 @@ yarn build # with mobx-react-lite
   782 B                build/static/js/runtime-main.8c7b4dcd.js
   646 B (-4 B)         build/static/js/main.011016c0.chunk.js
   278 B                build/static/css/main.5ecd60fb.chunk.css
+
+yarn build # without any mobx
+
+  41.09 KB (-13.99 KB)  build/static/js/2.b9c7ee60.chunk.js
+  782 B                 build/static/js/runtime-main.8c7b4dcd.js
+  596 B (-50 B)         build/static/js/main.e24065f1.chunk.js
+  278 B                 build/static/css/main.5ecd60fb.chunk.css
 ```
