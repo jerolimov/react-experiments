@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 
 import { observable, action } from 'mobx';
-import { Observer, observer } from 'mobx-react';
+import { Observer, observer } from 'mobx-react-lite';
 
 interface Person {
   name: string;
