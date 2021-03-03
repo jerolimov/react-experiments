@@ -1,4 +1,4 @@
-# Getting Started with Create React App
+# jest coverage experiment with JavaScript
 
 ```
 ➜  jest-coverage-jsx git:(master) ✗ yarn coverage
