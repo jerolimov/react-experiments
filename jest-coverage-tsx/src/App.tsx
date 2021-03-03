@@ -1,5 +1,6 @@
 import './App.css';
 import Logo from './Logo';
+import AnotherComponent from './subfolder/subsubfolder/AnotherComponent';
 
 export default function App() {
   return (
@@ -17,6 +18,7 @@ export default function App() {
         >
           Learn React
         </a>
+        <AnotherComponent />
       </header>
     </div>
   );
