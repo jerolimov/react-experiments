@@ -15,7 +15,7 @@ export default function App() {
       title: 'Second group',
     },
     {
-      title: 'A third group with an extra long title',
+      title: 'A third group with long title',
     },
     {
       title: 'Fourth group',

@@ -1,6 +1,8 @@
 import { Children, useState } from "react"
 import { Size, View } from "./View";
 
+import './MasonryLayout.css'
+
 export interface MasonryLayoutProps {
   columns: number,
   children: React.ReactElement[],
@@ -19,6 +21,7 @@ export function MasonryLayout(props: MasonryLayoutProps) {
     items: [] as React.ReactElement[],
   }));
   let added = false;
+  let allRendered = true;
   Children.forEach(props.children, (item, itemIndex) => {
     // Fill first row directly
     if (itemIndex < columns) {
@@ -44,13 +47,15 @@ export function MasonryLayout(props: MasonryLayoutProps) {
     if (!added) {
       column.items.push(item);
       added = true;
+    } else {
+      allRendered = false;
     }
   });
 
   console.log('groupedColumns', groupedColumns);
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'row' }}>
+    <div className="MasonryLayout" style={{ display: 'flex', flexDirection: 'row', opacity: allRendered ? 1 : 0.5 }}>
       {groupedColumns.map((groupedColumn, columnIndex) => (
         <div key={columnIndex} style={{ flex: 1 }}>
           column #{columnIndex}
