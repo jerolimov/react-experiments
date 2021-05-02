@@ -1,7 +1,10 @@
 import { useMemo } from 'react';
 import { ActionGroup, ActionGroupProps } from './ActionGroup';
 import { EvenlyColumnLayout } from './EvenlyColumnLayout';
+import { MasonryLayout } from './MasonryLayout';
 import useContainerWidth from './useContainerWidth';
+
+const Layout = MasonryLayout;
 
 export default function App() {
   const groups: ActionGroupProps[] = [
@@ -34,9 +37,9 @@ export default function App() {
   return (
     <div ref={containerRef}>
       {columns ? (
-        <EvenlyColumnLayout columns={columns}>
+        <Layout columns={columns}>
           {groups.map(group => <ActionGroup key={group.title} {...group} />)}
-        </EvenlyColumnLayout>
+        </Layout>
     ) : null}
     </div>
   );
