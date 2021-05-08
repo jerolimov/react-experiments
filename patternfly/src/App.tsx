@@ -1,26 +1,12 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { Button, Flex, FlexItem } from '@patternfly/react-core';
 
-function App() {
+export default function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Flex>
+      <FlexItem><Button>primary</Button></FlexItem>
+      <FlexItem><Button variant="secondary">secondary</Button></FlexItem>
+      <FlexItem><Button variant="link">link</Button></FlexItem>
+      <FlexItem><Button variant="link" isInline>inline link</Button></FlexItem>
+    </Flex>
   );
 }
-
-export default App;
