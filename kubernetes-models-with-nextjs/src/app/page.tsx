@@ -26,21 +26,18 @@ interface Data {
   services: IService[];
 }
 
-async function getData(): Promise<Data> {
+async function getServices(): Promise<Service[]> {
   const response = await fetch(url)
   if (!response.ok) {
     throw new Error(`Unxpected status: ${response.status} ${response.statusText}`)
   }
   const serviceList: ServiceList = await response.json();
   const services = serviceList.items.map((item => new Service(item)));
-
-  // Of course, you could also return just ServiceList here
-  return { services }
+  return services
 }
 
 export default async function Page() {
-  const data = await getData()
-  const { services } = data;
+  const services = await getServices()
 
   return (
     <main>
@@ -51,10 +48,10 @@ export default async function Page() {
       <table>
         <thead>
           <tr>
-            <th style={{ textAlign: 'left' }}>Type</th>
-            <th style={{ textAlign: 'left' }}>Name</th>
-            <th style={{ textAlign: 'left' }}>URL</th>
-            <th style={{ textAlign: 'left' }}>Created</th>
+            <th className="text-left">Type</th>
+            <th className="text-left">Name</th>
+            <th className="text-left">URL</th>
+            <th className="text-left">Created</th>
           </tr>
         </thead>
         <tbody>
