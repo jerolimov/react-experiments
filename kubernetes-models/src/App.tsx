@@ -1,5 +1,11 @@
 import { useEffect, useState } from 'react';
 import { Service } from "@kubernetes-models/knative/serving.knative.dev/v1/Service";
+import { ListMeta } from "@kubernetes-models/apimachinery/apis/meta/v1/ListMeta";
+
+interface List<ItemType> {
+  metadata: ListMeta;
+  items: ItemType[];
+}
 
 const resourceGroup = `serving.knative.dev/v1`;
 const resourcesName = `services`;
@@ -26,7 +32,7 @@ function App() {
         throw new Error(`Unxpected status: ${response.status} ${response.statusText}`)
       }
       return response.json();
-    }).then((jsonResponseBody) => {
+    }).then((jsonResponseBody: List<Service>) => {
       console.log('jsonResponseBody', jsonResponseBody);
       setState({ state: 'loaded', items: jsonResponseBody.items })
     }).catch((error) => {
