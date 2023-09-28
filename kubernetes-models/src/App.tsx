@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Service } from "@kubernetes-models/knative/serving.knative.dev/v1/Service";
+import { IService, Service } from "@kubernetes-models/knative/serving.knative.dev/v1/Service";
 import { ListMeta } from "@kubernetes-models/apimachinery/apis/meta/v1/ListMeta";
 
 interface List<ItemType> {
@@ -7,7 +7,7 @@ interface List<ItemType> {
   items: ItemType[];
 }
 
-interface ServiceList extends List<Service> {
+interface ServiceList extends List<IService> {
   apiVersion: 'serving.knative.dev/v1';
   kind: 'ServiceList';
 }
@@ -24,7 +24,7 @@ const dateTimeFormat = new Intl.DateTimeFormat(locale, { dateStyle: 'short', tim
 // Yep, state.state is annoying, but its just for testing this quickly...
 type State =
   { state: 'loading', loading: true } |
-  { state: 'loaded', items: Service[] } |
+  { state: 'loaded', items: IService[] } |
   { state: 'failed', error: string };
 
 function App() {
@@ -37,9 +37,37 @@ function App() {
         throw new Error(`Unxpected status: ${response.status} ${response.statusText}`)
       }
       return response.json();
-    }).then((jsonResponseBody: ServiceList) => {
-      console.log('jsonResponseBody', jsonResponseBody);
-      setState({ state: 'loaded', items: jsonResponseBody.items })
+    }).then((serviceList: ServiceList) => {
+      console.log('jsonResponseBody', serviceList);
+
+      const services = serviceList.items.map((item => new Service(item)));
+
+      // Test validate function
+      services.forEach((service) => {
+        const originSpec = service.spec;
+
+        // Doesn't fail because most data are nullable in the schema! Hmmm. :-/
+        // See node_modules/@kubernetes-models/knative/serving.knative.dev/v1/Service.js
+        service.spec = {};
+        service.validate();
+
+        // Enforce an error with a type mismatch:
+        try {
+          (service.spec as any) = 'test';
+          service.validate();
+        } catch (error) {
+          console.warn('validation error:', error);
+          // Okay, at least for an invalid spec type we've got an error:
+          if (error?.toString() !== 'Error: data/spec must be object') {
+            throw error;
+          }
+        }
+
+        service.spec = originSpec;
+      })
+
+      setState({ state: 'loaded', items: services })
+
     }).catch((error) => {
       console.error('fetch error:', error);
       setState({ state: 'failed', error: error.toString() });
