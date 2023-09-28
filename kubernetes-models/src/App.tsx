@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Service } from "@kubernetes-models/knative/serving.knative.dev/v1/Service";
 
 const resourceGroup = `serving.knative.dev/v1`;
 const resourcesName = `services`;
@@ -12,7 +13,7 @@ const dateTimeFormat = new Intl.DateTimeFormat(locale, { dateStyle: 'short', tim
 // Yep, state.state is annoying, but its just for testing this quickly...
 type State =
   { state: 'loading', loading: true } |
-  { state: 'loaded', items: any[] } |
+  { state: 'loaded', items: Service[] } |
   { state: 'failed', error: string };
 
 function App() {
@@ -55,12 +56,12 @@ function App() {
               </tr>
             </thead>
             <tbody>
-              {state.items.map((item) => (
-                <tr key={item.metadata.name}>
+              {state.items.map((item, index) => (
+                <tr key={index}>
                   <td>{item.metadata?.labels?.['function.knative.dev'] === 'true' ? 'Function' : 'Service'}</td>
-                  <td>{item.metadata.name}</td>
+                  <td>{item.metadata?.name}</td>
                   <td>{item.status?.url && <a href={item.status?.url} target="_blank" rel="noreferrer">{item.status?.url}</a>}</td>
-                  <td>{item.metadata.creationTimestamp && dateTimeFormat.format(new Date(item.metadata.creationTimestamp))}</td>
+                  <td>{item.metadata?.creationTimestamp && dateTimeFormat.format(new Date(item.metadata.creationTimestamp))}</td>
                 </tr>
               ))}
             </tbody>
