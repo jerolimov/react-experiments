@@ -9,17 +9,32 @@ const url = `${baseUrl}/${resourceGroup}/namespaces/${namespace}/${resourcesName
 const locale = 'de-DE';
 const dateTimeFormat = new Intl.DateTimeFormat(locale, { dateStyle: 'short', timeStyle: 'short' });
 
-async function getData() {
+interface ServiceList {
+  apiVersion: 'serving.knative.dev/v1';
+  kind: 'ServiceList';
+  items: any[];
+  metadata: {
+    continue?: string;
+  };
+}
+
+interface Data {
+  items: any[];
+}
+
+async function getData(): Promise<Data> {
   const response = await fetch(url)
   if (!response.ok) {
     throw new Error(`Unxpected status: ${response.status} ${response.statusText}`)
   }
-  return response.json()
+  const serviceList: ServiceList = await response.json();
+  // You could also return just ServiceList here.
+  return { items: serviceList.items }
 }
 
 export default async function Page() {
   const data = await getData()
-  const items: any[] = data.items;
+  const { items } = data;
 
   return (
     <main>
