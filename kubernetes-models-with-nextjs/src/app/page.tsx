@@ -1,7 +1,8 @@
 import { IService, Service } from "@kubernetes-models/knative/serving.knative.dev/v1/Service";
 import { ListMeta } from "@kubernetes-models/apimachinery/apis/meta/v1/ListMeta";
 
-const baseUrl = `http://localhost:9015/api/kubernetes/apis`;
+// Fetched in the backend, so that it bypass CORS issues
+const baseUrl = `http://localhost:9000/api/kubernetes/apis`;
 
 const resourceGroup = `serving.knative.dev/v1`;
 const resourcesName = `services`;

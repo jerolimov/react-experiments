@@ -16,6 +16,9 @@ const resourceGroup = `serving.knative.dev/v1`;
 const resourcesName = `services`;
 const namespace = `christoph`;
 
+// It bypass the CORS issue by using the proxy feature of react-scripts.
+// https://create-react-app.dev/docs/proxying-api-requests-in-development/
+// See package.json for the proxt target.
 const url = `/api/kubernetes/apis/${resourceGroup}/namespaces/${namespace}/${resourcesName}?limit=250&cluster=local-cluster`;
 
 const locale = 'de-DE';
