@@ -7,6 +7,11 @@ interface List<ItemType> {
   items: ItemType[];
 }
 
+interface ServiceList extends List<Service> {
+  apiVersion: 'serving.knative.dev/v1';
+  kind: 'ServiceList';
+}
+
 const resourceGroup = `serving.knative.dev/v1`;
 const resourcesName = `services`;
 const namespace = `christoph`;
@@ -32,7 +37,7 @@ function App() {
         throw new Error(`Unxpected status: ${response.status} ${response.statusText}`)
       }
       return response.json();
-    }).then((jsonResponseBody: List<Service>) => {
+    }).then((jsonResponseBody: ServiceList) => {
       console.log('jsonResponseBody', jsonResponseBody);
       setState({ state: 'loaded', items: jsonResponseBody.items })
     }).catch((error) => {
