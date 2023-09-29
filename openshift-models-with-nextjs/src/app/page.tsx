@@ -1,68 +1,86 @@
-// import { IService, Service } from "@kubernetes-models/knative/serving.knative.dev/v1/Service";
-// import { ListMeta } from "@kubernetes-models/apimachinery/apis/meta/v1/ListMeta";
+import { ListMeta } from "@kubernetes-models/apimachinery/apis/meta/v1/ListMeta";
+import { BuildRun } from "../../gen/shipwright.io/v1alpha1/BuildRun";
 
 // Fetched in the backend, so that it bypass CORS issues
 const baseUrl = `http://localhost:9000/api/kubernetes/apis`;
 
-const resourceGroup = `serving.knative.dev/v1`;
-const resourcesName = `services`;
-const namespace = `christoph`;
+const resourceGroup = `shipwright.io/v1alpha1`;
+const resourcesName = `buildruns`;
+const namespace = `build-examples`;
 
 const url = `${baseUrl}/${resourceGroup}/namespaces/${namespace}/${resourcesName}?limit=250&cluster=local-cluster`;
 
 const locale = 'de-DE';
 const dateTimeFormat = new Intl.DateTimeFormat(locale, { dateStyle: 'short', timeStyle: 'short' });
+const numberFormat = new Intl.NumberFormat(locale, { maximumFractionDigits: 1 });
 
 interface List<ItemType> {
-  metadata: any;
+  metadata: ListMeta;
   items: ItemType[];
 }
 
-interface ServiceList extends List<any> {
-  apiVersion: 'serving.knative.dev/v1';
-  kind: 'ServiceList';
+interface BuildRunList extends List<any> {
+  apiVersion: 'shipwright.io/v1alpha1';
+  kind: 'BuildRun';
 }
 
-interface Data {
-  services: any[];
-}
-
-async function getServices(): Promise<any[]> {
+async function getBuildRuns(): Promise<BuildRun[]> {
   const response = await fetch(url)
   if (!response.ok) {
     throw new Error(`Unxpected status: ${response.status} ${response.statusText}`)
   }
-  const serviceList: ServiceList = await response.json();
-  return serviceList.items;
+  return (await response.json() as BuildRunList).items;
 }
 
 export default async function Page() {
-  const services = await getServices()
+  const buildRuns = await getBuildRuns()
 
   return (
     <main>
       {/* <h2>data:</h2>
       <code>{JSON.stringify(data, null, 2)}</code> */}
 
-      <h2>Resources</h2>
+      <h2>BuildRuns</h2>
       <table>
         <thead>
           <tr>
-            <th className="text-left">Type</th>
+            <th className="text-left">Status</th>
             <th className="text-left">Name</th>
-            <th className="text-left">URL</th>
             <th className="text-left">Created</th>
+            <th className="text-left">Completed</th>
+            <th className="text-left">Duration</th>
           </tr>
         </thead>
         <tbody>
-          {services.map((service, index) => (
-            <tr key={index}>
-              <td>{service.metadata?.labels?.['function.knative.dev'] === 'true' ? 'Function' : 'Service'}</td>
-              <td>{service.metadata?.name}</td>
-              <td>{service.status?.url && <a href={service.status?.url} target="_blank" rel="noreferrer">{service.status?.url}</a>}</td>
-              <td>{service.metadata?.creationTimestamp && dateTimeFormat.format(new Date(service.metadata.creationTimestamp))}</td>
-            </tr>
-          ))}
+          {buildRuns.map((buildRun, index) => {
+            let status = 'Unknown';
+            const statusCondition = buildRun.status?.conditions?.find((c) => c.type === 'Succeeded');
+            if (statusCondition) {
+              if (statusCondition.status === 'True') {
+                status = 'Successful';
+              } else if (statusCondition.status === 'False') {
+                status = 'Failed';
+              } else if (statusCondition.status === 'Unknown' && statusCondition.reason) {
+                status = statusCondition.reason;
+              }
+            }
+
+            const name = buildRun.metadata?.name;
+            const created = buildRun.metadata?.creationTimestamp ? new Date(buildRun.metadata.creationTimestamp) : undefined;
+            const completed = buildRun.status?.completionTime ? new Date(buildRun.status?.completionTime) : undefined;
+            const now = Date.now();
+            const duration = ((completed?.getTime() ?? now) - (created?.getTime() ?? now)) / 1000 / 60;
+
+            return (
+              <tr key={index}>
+                <td>{status}</td>
+                <td>{name}</td>
+                <td>{created && dateTimeFormat.format(created)}</td>
+                <td>{completed && dateTimeFormat.format(completed)}</td>
+                <td>{duration && numberFormat.format(duration)} m</td>
+              </tr>
+            )
+          })}
         </tbody>
       </table>
     </main>
