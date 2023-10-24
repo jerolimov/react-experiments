@@ -19,7 +19,7 @@ const namespace = `christoph`;
 // It bypass the CORS issue by using the proxy feature of react-scripts.
 // https://create-react-app.dev/docs/proxying-api-requests-in-development/
 // See package.json for the proxt target.
-const url = `/api/kubernetes/apis/${resourceGroup}/namespaces/${namespace}/${resourcesName}?limit=250&cluster=local-cluster`;
+const url = `/api/kubernetes/apis/${resourceGroup}/namespaces/${namespace}/${resourcesName}`;
 
 const locale = 'de-DE';
 const dateTimeFormat = new Intl.DateTimeFormat(locale, { dateStyle: 'short', timeStyle: 'short' });

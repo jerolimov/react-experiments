@@ -43,6 +43,8 @@ function App() {
     }).then((serviceList: ServiceList) => {
       console.log('jsonResponseBody', serviceList);
 
+      // Doesn't work on the frontend (has dependency to 'fs' npm module...
+      //
       // const app = new K8sApp();
       // // Test validate function
       // serviceList.items.forEach((serviceProps) => {
@@ -82,7 +84,7 @@ function App() {
                 <tr key={index}>
                   <td>{item.metadata?.name}</td>
                   <td>{item.metadata?.labels?.['function.knative.dev'] === 'true' ? 'Function' : 'Service'}</td>
-                  {/* <td>{item.status?.url && <a href={item.status?.url} target="_blank" rel="noreferrer">{item.status?.url}</a>}</td> */}
+                  <td>{(item as any).status?.url && <a href={(item as any).status?.url} target="_blank" rel="noreferrer">{(item as any).status?.url}</a>}</td>
                   <td>{item.metadata?.creationTimestamp && dateTimeFormat.format(new Date(item.metadata.creationTimestamp))}</td>
                 </tr>
               ))}
