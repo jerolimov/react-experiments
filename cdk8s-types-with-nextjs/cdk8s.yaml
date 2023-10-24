@@ -1,0 +1,5 @@
+language: typescript
+imports:
+  - https://github.com/knative/serving/releases/download/knative-v1.10.1/serving-crds.yaml
+  # - https://github.com/knative/eventing/releases/download/knative-v1.10.0/eventing-crds.yaml
+  # - https://github.com/knative/operator/releases/download/knative-v1.10.0/operator.yaml
